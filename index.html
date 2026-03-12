@@ -3,729 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio</title>
+  <title>Studio — We Build It. You Run It.</title>
   <link rel="stylesheet" href="https://use.typekit.net/dlk5fdl.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;background:#fff;overflow:hidden;font-family:'basic-sans','Helvetica Neue',Arial,sans-serif}
-    canvas{position:fixed;inset:0;pointer-events:none}
-    #ash-cv   {z-index:80}
-    #dragon-cv{z-index:100}
-    #fire-cv  {z-index:150}
-    .wrap{position:absolute;top:24vh;left:48px;z-index:200}
-    .headline{font-size:clamp(60px,9.2vw,130px);font-weight:700;line-height:1.06;letter-spacing:-0.01em;color:#000}
-    #cursor{display:inline-block;width:3px;height:.82em;background:#000;vertical-align:-.04em;margin-left:4px;animation:blink .55s step-end infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-    .nav{margin-top:40px;display:flex;gap:52px;opacity:0}
-    .nav a{font-size:12px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:#000;text-decoration:none}
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #fff;
+      color: #000;
+      font-family: 'basic-sans', 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .wrap {
+      position: absolute;
+      top: 24vh;
+      left: 48px;
+    }
+
+    .headline {
+      font-size: clamp(60px, 9.2vw, 130px);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      color: #000;
+    }
+
+    #cursor {
+      display: inline-block;
+      width: 3px; height: 0.82em;
+      background: #000;
+      vertical-align: -0.04em;
+      margin-left: 4px;
+      animation: blink 0.55s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .nav {
+      margin-top: 40px;
+      display: flex;
+      gap: 52px;
+      opacity: 0;
+      transform: translateY(80px);
+    }
+    .nav a {
+      font-family: 'basic-sans', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #000; text-decoration: none;
+    }
+    .nav.show a {
+      animation: slamin 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(80px);
+    }
+    .nav.show a:nth-child(1) { animation-delay: 0ms; }
+    .nav.show a:nth-child(2) { animation-delay: 60ms; }
+    .nav.show a:nth-child(3) { animation-delay: 120ms; }
+    @keyframes slamin {
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
 
-<canvas id="ash-cv"></canvas>
-<canvas id="dragon-cv"></canvas>
-<canvas id="fire-cv"></canvas>
+  <div class="wrap">
+    <div class="headline"><span id="typed"></span><span id="cursor"></span></div>
+    <nav class="nav" id="nav">
+      <a href="#">ABOUT</a>
+      <a href="#">PORTFOLIO</a>
+      <a href="#">CONTACT</a>
+    </nav>
+  </div>
 
-<div class="wrap">
-  <div class="headline"><span id="typed"></span><span id="cursor"></span></div>
-  <nav class="nav" id="nav">
-    <a href="#">ABOUT</a>
-    <a href="#">PORTFOLIO</a>
-    <a href="#">CONTACT</a>
-  </nav>
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-// CANVAS SETUP
-// ═══════════════════════════════════════════════════════════
-const dcv=document.getElementById('dragon-cv'), dctx=dcv.getContext('2d');
-const fcv=document.getElementById('fire-cv'),   fctx=fcv.getContext('2d');
-const acv=document.getElementById('ash-cv'),    actx=acv.getContext('2d');
-
-function resize(){[dcv,fcv,acv].forEach(c=>{c.width=innerWidth;c.height=innerHeight;})}
-resize(); window.addEventListener('resize',resize);
-const W=()=>innerWidth, H=()=>innerHeight;
-
-// ═══════════════════════════════════════════════════════════
-// AUDIO
-// ═══════════════════════════════════════════════════════════
-let _ac=null;
-function ac(){if(!_ac)_ac=new(window.AudioContext||window.webkitAudioContext)();return _ac;}
-
-function playClick(){
-  try{
-    const c=ac(),t=c.currentTime,len=Math.floor(c.sampleRate*.032);
-    const buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
-    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(len*.15));
-    const src=c.createBufferSource();src.buffer=buf;
-    const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3400;bp.Q.value=1.4;
-    const g=c.createGain();g.gain.setValueAtTime(.28,t);g.gain.exponentialRampToValueAtTime(.0001,t+.032);
-    src.connect(bp);bp.connect(g);g.connect(c.destination);src.start();
-  }catch(e){}
-}
-
-function playRoar(vol=1){
-  try{
-    const c=ac(),t=c.currentTime;
-    [[55,.14],[110,.09],[220,.05]].forEach(([f,v],i)=>{
-      const o=c.createOscillator();o.type=i===0?'sawtooth':'triangle';
-      o.frequency.setValueAtTime(f*(.85+Math.random()*.3),t);
-      o.frequency.exponentialRampToValueAtTime(f*.2,t+2.2);
-      const g=c.createGain();g.gain.setValueAtTime(v*vol,t);g.gain.exponentialRampToValueAtTime(.001,t+2.4);
-      o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+2.5);
-    });
-    const bl=Math.floor(c.sampleRate*3),fb=c.createBuffer(1,bl,c.sampleRate),fd=fb.getChannelData(0);
-    for(let i=0;i<bl;i++)fd[i]=(Math.random()*2-1)*Math.pow(1-i/bl,.3);
-    const ns=c.createBufferSource();ns.buffer=fb;
-    const lp=c.createBiquadFilter();lp.type='bandpass';lp.frequency.value=700;lp.Q.value=.5;
-    const ng=c.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(.2*vol,t+.3);ng.gain.exponentialRampToValueAtTime(.001,t+3);
-    ns.connect(lp);lp.connect(ng);ng.connect(c.destination);ns.start(t);
-  }catch(e){}
-}
-
-function playSpark(){
-  try{
-    const c=ac(),t=c.currentTime;
-    const o=c.createOscillator();o.type='square';
-    o.frequency.setValueAtTime(1800+Math.random()*800,t);
-    o.frequency.exponentialRampToValueAtTime(200,t+.09);
-    const g=c.createGain();g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);
-    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.11);
-  }catch(e){}
-}
-
-// ═══════════════════════════════════════════════════════════
-// DRAGON STATE
-// ═══════════════════════════════════════════════════════════
-const D={
-  // head world position
-  hx:0, hy:0,
-  // path history (array of {x,y})
-  path:[],
-  SEG_SPACING:26,
-  NUM_SEGS:30,
-  // animation control (driven by GSAP / logic)
-  entering:false,
-  idle:false,
-  leaving:false,
-  entryT:0,
-  leaveT:0,
-  opacity:1,
-  visible:false,
-  // micro-behaviors (GSAP tweens these)
-  jawOpen:0,
-  headTilt:0,
-  blinkT:0,
-  breathScale:1,
-  chestBulge:0,
-  idleT:0,
-};
-
-// ── PATH FOLLOWING ─────────────────────────────────────────
-function pushPath(){
-  D.path.unshift({x:D.hx,y:D.hy});
-  const max=(D.NUM_SEGS+4)*D.SEG_SPACING*2;
-  if(D.path.length>max)D.path.length=max;
-}
-
-// Returns {x,y,angle} at pixel-distance d along stored path
-function samplePath(d){
-  if(D.path.length<2)return{x:D.hx,y:D.hy,angle:0};
-  let traveled=0;
-  for(let i=0;i<D.path.length-1;i++){
-    const dx=D.path[i+1].x-D.path[i].x,dy=D.path[i+1].y-D.path[i].y;
-    const len=Math.sqrt(dx*dx+dy*dy);
-    if(len<.001)continue;
-    if(traveled+len>=d){
-      const frac=(d-traveled)/len;
-      return{
-        x:D.path[i].x+dx*frac,
-        y:D.path[i].y+dy*frac,
-        angle:Math.atan2(dy,dx)
-      };
+  <script>
+    let _ctx = null;
+    function getCtx() {
+      if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
+      return _ctx;
     }
-    traveled+=len;
-  }
-  const last=D.path[D.path.length-1];
-  return{x:last.x,y:last.y,angle:0};
-}
-
-// ── ENTRY PATH ─────────────────────────────────────────────
-function entryHeadPos(t){
-  // t: 0→1  head moves right→left, weaving sinusoidally
-  const ease=t<.5?2*t*t:-1+(4-2*t)*t;  // ease-in-out
-  const startX=W()+350, restX=W()*.16;
-  const baseY=H()*.50;
-  const wave=Math.sin(t*Math.PI*3.2)*45*(1-t*.6);
-  // subtle speed variation: add small random bumps
-  return{
-    x:startX+(restX-startX)*ease,
-    y:baseY+wave
-  };
-}
-
-// ═══════════════════════════════════════════════════════════
-// DRAGON DRAWING
-// ═══════════════════════════════════════════════════════════
-const C={
-  body:'#C41E3A',  dark:'#8B0000',  vdark:'#550000',
-  gold:'#FFD700',  golddk:'#B8860B', belly:'#E8621A',
-  horn:'#DAA520',  eye:'#FFD700',   pupil:'#110000',
-};
-
-function drawDragon(){
-  dctx.clearRect(0,0,W(),H());
-  if(!D.visible||D.path.length<2)return;
-  dctx.save();
-  dctx.globalAlpha=D.opacity;
-
-  // collect all segment positions
-  const segs=[];
-  for(let i=0;i<=D.NUM_SEGS;i++){
-    segs.push(samplePath(i*D.SEG_SPACING));
-  }
-
-  // ── GROUND SHADOW ──
-  segs.forEach((p,i)=>{
-    if(i===0||i>D.NUM_SEGS-1)return;
-    const nt=i/D.NUM_SEGS;
-    const bw=(6+Math.sin((1-nt)*Math.PI)*22)*(i>D.NUM_SEGS-5?(D.NUM_SEGS-i)/5:1);
-    const gr=dctx.createRadialGradient(p.x,p.y+20,0,p.x,p.y+20,bw*1.8);
-    gr.addColorStop(0,'rgba(0,0,0,.13)');gr.addColorStop(1,'rgba(0,0,0,0)');
-    dctx.save();dctx.fillStyle=gr;
-    dctx.beginPath();dctx.ellipse(p.x,p.y+20,bw*1.8,bw*.4,0,0,Math.PI*2);
-    dctx.fill();dctx.restore();
-  });
-
-  // ── BODY SEGMENTS (tail → neck) ──
-  for(let i=D.NUM_SEGS;i>=1;i--){
-    const p=segs[i], pn=segs[i-1];
-    if(!p||!pn)continue;
-    const angle=Math.atan2(pn.y-p.y,pn.x-p.x);
-    const nt=i/D.NUM_SEGS;  // 1=tail, 0=head
-    const taper=i>D.NUM_SEGS-5?(D.NUM_SEGS-i)/5:1;
-    const belly=Math.sin((1-nt)*Math.PI);
-    const bw=(7+belly*22)*taper*(i<4?1:D.breathScale+(i===8||i===9?D.chestBulge*.12:0));
-
-    drawSegment(p.x,p.y,angle,bw,nt,i);
-
-    // legs on 5 pairs of segments
-    if([4,6,8,10,12].includes(i)){
-      const walkT=D.entryT*28+i*2.6;
-      drawLegs(p.x,p.y,angle,bw,walkT,i);
+    function playClick() {
+      try {
+        const c = getCtx(), t = c.currentTime;
+        const len = Math.floor(c.sampleRate * 0.032);
+        const buf = c.createBuffer(1, len, c.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * Math.exp(-i/(len*0.15));
+        const src = c.createBufferSource(); src.buffer = buf;
+        const bp = c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3400; bp.Q.value=1.4;
+        const g = c.createGain(); g.gain.setValueAtTime(0.28,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.032);
+        src.connect(bp); bp.connect(g); g.connect(c.destination); src.start();
+      } catch(e) {}
     }
-  }
 
-  // ── HEAD ──
-  if(segs[0]&&segs[1]){
-    const ha=Math.atan2(segs[0].y-segs[1].y,segs[0].x-segs[1].x)+D.headTilt;
-    drawHead(segs[0].x,segs[0].y,ha);
-  }
+    const LINE1 = 'WE BUILD IT.';
+    const LINE2 = 'YOU RUN IT.';
+    const FULL  = LINE1 + '\n' + LINE2;
 
-  dctx.restore();
-}
+    const typedEl  = document.getElementById('typed');
+    const cursorEl = document.getElementById('cursor');
+    const navEl    = document.getElementById('nav');
 
-function drawSegment(x,y,ang,w,nt,idx){
-  dctx.save();dctx.translate(x,y);dctx.rotate(ang);
-  const h=w*1.15;
+    let idx = 0;
 
-  // main body
-  const bg=dctx.createLinearGradient(0,-h,0,h);
-  bg.addColorStop(0,C.vdark);bg.addColorStop(.35,C.body);bg.addColorStop(.65,C.body);bg.addColorStop(1,C.dark);
-  dctx.fillStyle=bg;
-  dctx.beginPath();dctx.ellipse(0,0,w*1.15,h,0,0,Math.PI*2);dctx.fill();
-
-  // belly plate
-  if(nt<.82){
-    dctx.fillStyle=C.belly;
-    dctx.beginPath();dctx.ellipse(0,h*.52,w*.88,h*.28,0,0,Math.PI);dctx.fill();
-    dctx.strokeStyle=C.golddk;dctx.lineWidth=.7;
-    dctx.beginPath();dctx.arc(0,h*.18,w*.74,.05,Math.PI-.05);dctx.stroke();
-  }
-
-  // dorsal spike (every other)
-  if(idx%2===0&&nt<.88){
-    dctx.fillStyle=C.gold;
-    dctx.beginPath();dctx.moveTo(-4,-h*.88);dctx.lineTo(0,-h*1.55);dctx.lineTo(4,-h*.88);dctx.fill();
-    dctx.strokeStyle=C.golddk;dctx.lineWidth=.6;
-    dctx.beginPath();dctx.moveTo(-4,-h*.88);dctx.lineTo(0,-h*1.55);dctx.lineTo(4,-h*.88);dctx.stroke();
-  }
-
-  // outline
-  dctx.strokeStyle=C.golddk;dctx.lineWidth=.9;
-  dctx.beginPath();dctx.ellipse(0,0,w*1.15,h,0,0,Math.PI*2);dctx.stroke();
-
-  dctx.restore();
-}
-
-function drawLegs(x,y,ang,bw,wt,idx){
-  dctx.save();dctx.translate(x,y);dctx.rotate(ang);
-
-  [-1,1].forEach(side=>{
-    const phase=wt+(side===1?0:Math.PI);
-    const upperSwing=Math.sin(phase)*.55;
-    const lowerBend=.5+Math.cos(phase)*.3;
-
-    const ux=0, uy=side*bw;
-    const uLen=15;
-    const uAng=(side*Math.PI*.5)+upperSwing-Math.PI*.1;
-    const lx1=ux+Math.cos(uAng)*uLen, ly1=uy+Math.sin(uAng)*uLen;
-    const lLen=13;
-    const lAng=uAng+lowerBend*side;
-    const lx2=lx1+Math.cos(lAng)*lLen, ly2=ly1+Math.sin(lAng)*lLen;
-
-    // foot shadow
-    dctx.save();dctx.fillStyle='rgba(0,0,0,.1)';
-    dctx.beginPath();dctx.ellipse(lx2,ly2+4*side,7,2.5,0,0,Math.PI*2);dctx.fill();dctx.restore();
-
-    // upper leg
-    dctx.save();dctx.strokeStyle=C.dark;dctx.lineWidth=6;dctx.lineCap='round';
-    dctx.beginPath();dctx.moveTo(ux,uy);dctx.lineTo(lx1,ly1);dctx.stroke();
-    dctx.strokeStyle=C.body;dctx.lineWidth=4;dctx.stroke();dctx.restore();
-
-    // lower leg
-    dctx.save();dctx.strokeStyle=C.dark;dctx.lineWidth=5;dctx.lineCap='round';
-    dctx.beginPath();dctx.moveTo(lx1,ly1);dctx.lineTo(lx2,ly2);dctx.stroke();
-    dctx.strokeStyle=C.body;dctx.lineWidth=3.2;dctx.stroke();dctx.restore();
-
-    // 3 claws
-    for(let c=-1;c<=1;c++){
-      const ca=lAng+c*.32;
-      dctx.save();dctx.strokeStyle=C.gold;dctx.lineWidth=1.6;dctx.lineCap='round';
-      dctx.beginPath();dctx.moveTo(lx2,ly2);
-      dctx.lineTo(lx2+Math.cos(ca)*7,ly2+Math.sin(ca)*7);dctx.stroke();dctx.restore();
+    function render() {
+      const s = FULL.slice(0, idx);
+      const nl = s.indexOf('\n');
+      typedEl.innerHTML = nl === -1 ? s : s.slice(0, nl) + '<br>' + s.slice(nl + 1);
     }
-  });
-  dctx.restore();
-}
 
-function drawHead(x,y,ang){
-  dctx.save();dctx.translate(x,y);dctx.rotate(ang);
-
-  // head shadow
-  dctx.save();dctx.fillStyle='rgba(0,0,0,.14)';
-  dctx.beginPath();dctx.ellipse(4,22,40,11,0,0,Math.PI*2);dctx.fill();dctx.restore();
-
-  // ── lower jaw (opens downward from snout hinge) ──
-  dctx.save();
-  dctx.translate(-30,8);
-  dctx.rotate(D.jawOpen*.45);
-  const jg=dctx.createLinearGradient(0,-8,0,14);
-  jg.addColorStop(0,C.dark);jg.addColorStop(1,C.vdark);
-  dctx.fillStyle=jg;
-  dctx.beginPath();dctx.ellipse(16,5,20,9,-.1,0,Math.PI*2);dctx.fill();
-  // inner mouth glow
-  if(D.jawOpen>.15){
-    dctx.save();dctx.globalAlpha=D.jawOpen*.9;
-    const mg=dctx.createRadialGradient(16,2,0,16,2,22);
-    mg.addColorStop(0,'rgba(255,230,60,.95)');
-    mg.addColorStop(.4,'rgba(255,100,10,.7)');
-    mg.addColorStop(1,'rgba(200,0,0,0)');
-    dctx.fillStyle=mg;
-    dctx.beginPath();dctx.ellipse(16,2,20,8,0,0,Math.PI*2);dctx.fill();
-    dctx.restore();
-  }
-  dctx.strokeStyle=C.golddk;dctx.lineWidth=.8;
-  dctx.beginPath();dctx.ellipse(16,5,20,9,-.1,0,Math.PI*2);dctx.stroke();
-  dctx.restore();
-
-  // ── main head body ──
-  const hg=dctx.createLinearGradient(0,-22,0,22);
-  hg.addColorStop(0,C.dark);hg.addColorStop(.4,C.body);hg.addColorStop(1,'#7a0000');
-  dctx.fillStyle=hg;
-  dctx.beginPath();dctx.ellipse(-4,-3,38,22,.15,0,Math.PI*2);dctx.fill();
-  dctx.strokeStyle=C.golddk;dctx.lineWidth=1;dctx.stroke();
-
-  // snout
-  const sg=dctx.createRadialGradient(-36,-4,2,-36,-4,16);
-  sg.addColorStop(0,C.body);sg.addColorStop(1,C.dark);
-  dctx.fillStyle=sg;
-  dctx.beginPath();dctx.ellipse(-36,-4,14,10,-.1,0,Math.PI*2);dctx.fill();
-  dctx.strokeStyle=C.golddk;dctx.lineWidth=.8;dctx.stroke();
-
-  // nostrils
-  dctx.fillStyle='#550000';
-  dctx.beginPath();dctx.ellipse(-42,-7,3.5,2.5,.5,0,Math.PI*2);dctx.fill();
-  dctx.beginPath();dctx.ellipse(-38,-9,3,2,-.3,0,Math.PI*2);dctx.fill();
-
-  // ── eye ──
-  dctx.fillStyle='#fff8e0';
-  dctx.beginPath();dctx.ellipse(-7,-11,10,7,.2,0,Math.PI*2);dctx.fill();
-  dctx.fillStyle=C.eye;
-  dctx.beginPath();dctx.ellipse(-6,-11,7,7,.2,0,Math.PI*2);dctx.fill();
-  const blink=1-D.blinkT;
-  dctx.fillStyle=C.pupil;
-  dctx.beginPath();dctx.ellipse(-6,-11,3,6.5*blink+.2,.2,0,Math.PI*2);dctx.fill();
-  // highlight
-  dctx.fillStyle='rgba(255,255,255,.65)';
-  dctx.beginPath();dctx.ellipse(-4,-13,2.5,2,0,0,Math.PI*2);dctx.fill();
-  // eyelid
-  if(D.blinkT>.05){
-    dctx.fillStyle=C.dark;
-    dctx.beginPath();dctx.ellipse(-7,-11,10,7*D.blinkT,.2,0,Math.PI*2);dctx.fill();
-  }
-
-  // ── horns ──
-  dctx.fillStyle=C.horn;
-  dctx.beginPath();dctx.moveTo(-9,-18);dctx.lineTo(-3,-39);dctx.lineTo(-16,-19);dctx.fill();
-  dctx.beginPath();dctx.moveTo(6,-15);dctx.lineTo(12,-31);dctx.lineTo(0,-16);dctx.fill();
-  dctx.strokeStyle=C.golddk;dctx.lineWidth=.8;
-  dctx.beginPath();dctx.moveTo(-9,-18);dctx.lineTo(-3,-39);dctx.lineTo(-16,-19);dctx.stroke();
-
-  // ── whiskers ──
-  dctx.strokeStyle=C.gold;dctx.lineWidth=1.6;dctx.lineCap='round';
-  [[-26,-2,-52,9,-70,-2],[-26,5,-52,19,-68,11],[-26,-9,-52,-4,-70,-13]].forEach(([x1,y1,cx,cy,x2,y2])=>{
-    dctx.beginPath();dctx.moveTo(x1,y1);dctx.quadraticCurveTo(cx,cy,x2,y2);dctx.stroke();
-  });
-
-  // gold trim
-  dctx.strokeStyle=C.gold;dctx.lineWidth=1.3;
-  dctx.beginPath();dctx.ellipse(-4,-3,38,22,.15,0,Math.PI*2);dctx.stroke();
-
-  dctx.restore();
-}
-
-// ═══════════════════════════════════════════════════════════
-// FIRE SYSTEM
-// ═══════════════════════════════════════════════════════════
-const FIRE={mode:'off',particles:[]};
-// modes: 'off' | 'sparks' | 'small' | 'full'
-
-function fireOrigin(){
-  if(D.path.length<2)return{x:D.hx-52,y:D.hy,ang:Math.PI};
-  const p0=D.path[0];
-  const pk=D.path[Math.min(D.SEG_SPACING,D.path.length-1)];
-  const ang=Math.atan2(p0.y-pk.y,p0.x-pk.x)+D.headTilt;
-  return{
-    x:p0.x+Math.cos(ang)*55+(Math.random()-.5)*6,
-    y:p0.y+Math.sin(ang)*55+D.jawOpen*14+(Math.random()-.5)*5,
-    ang
-  };
-}
-
-function spawnParticles(){
-  const o=fireOrigin();
-  const m=FIRE.mode;
-  if(m==='off')return;
-  const n=m==='sparks'?4:m==='small'?10:26;
-  for(let i=0;i<n;i++){
-    const spread=m==='sparks'?.9:m==='small'?.5:.38;
-    const ang=o.ang+(Math.random()-.5)*spread;
-    const spd=m==='sparks'?(3+Math.random()*5):m==='small'?(5+Math.random()*8):(9+Math.random()*14);
-    const life=m==='sparks'?(18+Math.random()*20):m==='small'?(30+Math.random()*30):(50+Math.random()*55);
-    const hot=Math.random();
-    const type=m==='sparks'?'spark':hot>.72?'core':hot>.42?'flame':'ember';
-    FIRE.particles.push({
-      x:o.x+(Math.random()-.5)*12,y:o.y+(Math.random()-.5)*8,
-      vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
-      life,maxLife:life,
-      size:type==='spark'?(1.5+Math.random()*2.5):type==='core'?(11+Math.random()*18):(8+Math.random()*13),
-      type,hot
-    });
-  }
-  if(m==='full'&&Math.random()<.18){
-    const sa=o.ang+(Math.random()-.5)*.25;
-    FIRE.particles.push({
-      x:o.x,y:o.y,vx:Math.cos(sa)*3,vy:Math.sin(sa)*2-1.5,
-      life:90+Math.random()*60,maxLife:150,size:22+Math.random()*28,type:'smoke',hot:0
-    });
-  }
-}
-
-function drawFire(){
-  fctx.clearRect(0,0,W(),H());
-  if(FIRE.mode!=='off')spawnParticles();
-  for(let i=FIRE.particles.length-1;i>=0;i--){
-    const p=FIRE.particles[i];
-    p.x+=p.vx;p.y+=p.vy;
-    p.vx*=.975;p.vy*=.975;
-    p.vy-=.14; // heat rises
-    p.size*=p.type==='smoke'?1.014:.984;
-    p.life--;
-    if(p.life<=0||p.size<.4){FIRE.particles.splice(i,1);continue;}
-    const tf=p.life/p.maxLife;
-    fctx.save();
-    if(p.type==='smoke'){
-      fctx.globalAlpha=tf*.11;fctx.fillStyle='#777';
-      fctx.beginPath();fctx.arc(p.x,p.y,p.size,0,Math.PI*2);fctx.fill();
-    } else if(p.type==='spark'){
-      fctx.globalAlpha=tf;
-      fctx.fillStyle=`hsl(${38+Math.random()*18},100%,78%)`;
-      fctx.beginPath();fctx.arc(p.x,p.y,p.size,0,Math.PI*2);fctx.fill();
-      fctx.shadowColor='#ffcc00';fctx.shadowBlur=6;fctx.fill();
-    } else {
-      fctx.globalAlpha=tf*.92;
-      const r=255;
-      const g=p.type==='core'?Math.floor(210+45*tf):p.type==='flame'?Math.floor(120*tf+40):Math.floor(50*tf);
-      const b=p.type==='core'?Math.floor(90*tf):0;
-      const gr=fctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
-      gr.addColorStop(0,`rgba(${r},${g},${b},1)`);
-      gr.addColorStop(.45,`rgba(${r},${Math.floor(g*.5)},0,.65)`);
-      gr.addColorStop(1,`rgba(200,0,0,0)`);
-      fctx.fillStyle=gr;
-      fctx.shadowColor=`rgba(255,${g},0,.4)`;fctx.shadowBlur=p.type==='core'?14:6;
-      fctx.beginPath();fctx.arc(p.x,p.y,p.size,0,Math.PI*2);fctx.fill();
-    }
-    fctx.restore();
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// ASH / SOOT REVEAL
-// ═══════════════════════════════════════════════════════════
-let ashProg=0, navRect=null;
-const ashParts=[];
-
-function drawAsh(){
-  actx.clearRect(0,0,W(),H());
-  if(!navRect)return;
-
-  if(ashProg<1){
-    // soot cover
-    const pad=24;
-    actx.save();
-    actx.globalAlpha=Math.max(0,(1-ashProg)*.72);
-    actx.fillStyle='#0d0d0d';
-    actx.fillRect(navRect.left-pad,navRect.top-pad,navRect.width+pad*2,navRect.height+pad*2);
-    // grain texture on soot
-    for(let g=0;g<40;g++){
-      actx.globalAlpha=Math.max(0,(1-ashProg)*.06);
-      actx.fillStyle=Math.random()>.5?'#333':'#222';
-      actx.fillRect(
-        navRect.left-pad+Math.random()*(navRect.width+pad*2),
-        navRect.top-pad+Math.random()*(navRect.height+pad*2),
-        Math.random()*3+1,Math.random()*3+1
-      );
-    }
-    actx.restore();
-
-    // burn edge glow
-    if(ashProg>.04&&ashProg<.98){
-      const burnX=navRect.left+(navRect.width+48)*ashProg-24;
-      actx.save();
-      actx.globalAlpha=ashProg*(1-ashProg)*3.2;
-      actx.strokeStyle='#ff6600';actx.lineWidth=3;
-      actx.shadowColor='#ff4400';actx.shadowBlur=18;
-      actx.beginPath();
-      actx.moveTo(burnX,navRect.top-24);
-      actx.lineTo(burnX,navRect.bottom+24);
-      actx.stroke();
-      // ember sparks on edge
-      actx.restore();
-      if(Math.random()<.6){
-        ashParts.push({
-          x:burnX+(Math.random()-.5)*6,
-          y:navRect.top+Math.random()*navRect.height,
-          vx:(Math.random()-.5)*.8,vy:-.5-Math.random(),
-          life:30+Math.random()*40,maxLife:70,
-          size:.8+Math.random()*2.2,ember:true
-        });
+    function type() {
+      if (idx >= FULL.length) {
+        setTimeout(() => {
+          cursorEl.style.animation = 'none';
+          cursorEl.style.transition = 'opacity 0.3s';
+          cursorEl.style.opacity = '0';
+          setTimeout(() => {
+            navEl.style.opacity = '1';
+            navEl.classList.add('show');
+          }, 220);
+        }, 950);
+        return;
       }
+      const ch = FULL[idx++];
+      render();
+      if (ch !== '\n') playClick();
+      let d = 180 + (Math.random() * 80 - 30);
+      if (ch === '.') d += 200;
+      if (ch === ' ') d -= 30;
+      setTimeout(type, Math.max(80, d));
     }
-  }
 
-  // spawn ash flakes during reveal
-  if(ashProg>.08&&ashProg<1.05&&Math.random()<ashProg*.35){
-    ashParts.push({
-      x:navRect.left+Math.random()*navRect.width,
-      y:navRect.top+Math.random()*navRect.height,
-      vx:(Math.random()-.5)*.6,vy:.4+Math.random()*1.4,
-      life:70+Math.random()*80,maxLife:150,
-      size:1.2+Math.random()*3.5,ember:false
-    });
-  }
-
-  for(let i=ashParts.length-1;i>=0;i--){
-    const p=ashParts[i];
-    p.x+=p.vx;p.y+=p.vy;p.vy+=.03;p.vx+=(Math.random()-.5)*.08;
-    p.life--;if(p.life<=0||p.y>H()+20){ashParts.splice(i,1);continue;}
-    const tf=p.life/p.maxLife;
-    actx.save();
-    if(p.ember){
-      actx.globalAlpha=tf*.9;
-      actx.fillStyle=`hsl(${30+Math.random()*20},90%,${55+Math.floor(tf*30)}%)`;
-      actx.shadowColor='#ff8800';actx.shadowBlur=6;
-    } else {
-      actx.globalAlpha=tf*.55;
-      actx.fillStyle=`hsl(20,${Math.floor(tf*25)}%,${Math.floor(35+tf*25)}%)`;
-    }
-    actx.beginPath();actx.arc(p.x,p.y,p.size,0,Math.PI*2);actx.fill();
-    actx.restore();
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// RENDER LOOP
-// ═══════════════════════════════════════════════════════════
-let loopRunning=false;
-
-function tick(){
-  if(!loopRunning)return;
-
-  if(D.entering){
-    D.entryT=Math.min(1,D.entryT+.0022);
-    // occasional micro-hesitation for organic feel
-    if(Math.random()<.008)D.entryT=Math.max(0,D.entryT-.0004);
-    const p=entryHeadPos(D.entryT);
-    D.hx=p.x; D.hy=p.y;
-    pushPath();
-    if(D.entryT>=1){D.entering=false;D.idle=true;onArrived();}
-  }
-
-  if(D.idle){
-    D.idleT+=.018;
-    // subtle idle float
-    D.hx+=Math.sin(D.idleT*.7)*.4;
-    D.hy+=Math.cos(D.idleT*.9)*.3;
-    D.breathScale=1+Math.sin(D.idleT*2.1)*.022+D.chestBulge*.1;
-    pushPath();
-    if(Math.random()<.0012&&D.blinkT<.05)triggerBlink();
-  }
-
-  if(D.leaving){
-    D.leaveT=Math.min(1,D.leaveT+.0055);
-    const ease=D.leaveT<.5?2*D.leaveT*D.leaveT:-1+(4-2*D.leaveT)*D.leaveT;
-    D.hx-=2+ease*10;
-    D.hy-=1.5+ease*7;
-    D.opacity=1-Math.max(0,(D.leaveT-.65)/.35);
-    pushPath();
-    if(D.leaveT>=1){D.leaving=false;D.visible=false;loopRunning=false;}
-  }
-
-  drawDragon();drawFire();drawAsh();
-  requestAnimationFrame(tick);
-}
-
-function triggerBlink(){
-  let bt=0;
-  const iv=setInterval(()=>{
-    bt+=.14;
-    D.blinkT=bt<.5?bt*2:(1-bt)*2;
-    if(bt>=1){D.blinkT=0;clearInterval(iv);}
-  },16);
-}
-
-// ═══════════════════════════════════════════════════════════
-// GSAP TIMELINE — fires once dragon arrives
-// ═══════════════════════════════════════════════════════════
-function onArrived(){
-  const tl=gsap.timeline();
-
-  // 0-1.2s: idle — head tilts and settles
-  tl.to(D,{headTilt:.18,duration:.9,ease:'sine.inOut'})
-    .to(D,{headTilt:-.1,duration:.6,ease:'sine.inOut'})
-    .to(D,{headTilt:.06,duration:.5,ease:'sine.inOut'});
-
-  // 1.8s: FIRST ATTEMPT — sparks, fizzles
-  tl.add(()=>{ FIRE.mode='sparks'; playSpark(); },'+=.2')
-    .to(D,{jawOpen:.35,duration:.25,ease:'power2.out'})
-    .to({},{duration:.45})
-    .add(()=>{ FIRE.mode='off'; })
-    .to(D,{jawOpen:0,duration:.2});
-
-  // 2.7s: COUGH — head shakes
-  tl.to(D,{headTilt:.38,duration:.09,ease:'power3.out'},'+=.35')
-    .to(D,{headTilt:-.28,duration:.09})
-    .to(D,{headTilt:.22,duration:.09})
-    .to(D,{headTilt:-.12,duration:.09})
-    .to(D,{headTilt:0,duration:.14});
-
-  // 3.4s: SECOND ATTEMPT — small flame, almost
-  tl.to(D,{jawOpen:.6,chestBulge:.5,duration:.35,ease:'power2.out'},'+=.3')
-    .add(()=>{ FIRE.mode='small'; playSpark(); })
-    .to({},{duration:.7})
-    .add(()=>{ FIRE.mode='off'; })
-    .to(D,{jawOpen:.1,chestBulge:0,duration:.25});
-
-  // 4.5s: INHALE — chest swells, head pulls back, jaw cracks open
-  tl.to(D,{chestBulge:1,headTilt:-.3,duration:.8,ease:'power2.inOut'},'+=.4')
-    .to(D,{jawOpen:1,duration:.5,ease:'power3.out'});
-
-  // 5.3s: FULL FIRE BLAST
-  tl.add(()=>{
-    FIRE.mode='full';
-    playRoar(1);
-    navRect=document.getElementById('nav').getBoundingClientRect();
-    // animate soot away over 2.3s
-    gsap.to({v:0},{v:1,duration:2.3,ease:'power1.inOut',
-      onUpdate:function(){ashProg=this.targets()[0].v;},
-      onComplete:burnRevealNav
-    });
-  })
-  .to({},{duration:2.8}); // fire burns
-
-  // 8.1s: fire dies down
-  tl.add(()=>{ FIRE.mode='small'; })
-    .to({},{duration:.55})
-    .add(()=>{ FIRE.mode='off'; })
-    .to(D,{jawOpen:0,chestBulge:0,duration:.45,ease:'power2.inOut'});
-
-  // 8.8s: dragon glances at nav
-  tl.to(D,{headTilt:.25,duration:.7,ease:'sine.inOut'},'+=.3')
-    .to(D,{headTilt:0,duration:.5,ease:'sine.inOut'});
-
-  // 10s: DRAGON LEAVES — up and out
-  tl.add(()=>{
-    D.idle=false;D.leaving=true;
-  },'+=.6');
-}
-
-function burnRevealNav(){
-  const navEl=document.getElementById('nav');
-  navEl.style.opacity='1';
-  navEl.querySelectorAll('a').forEach((a,i)=>{
-    setTimeout(()=>{
-      a.style.color='#ff4400';
-      a.style.textShadow='0 0 18px #ff6600, 0 0 36px #ff2200';
-      a.style.opacity='1';
-      setTimeout(()=>{
-        a.style.transition='color 1.8s ease-out, text-shadow 1.8s ease-out';
-        a.style.color='#000';
-        a.style.textShadow='none';
-      },350);
-    },i*220);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// TYPING
-// ═══════════════════════════════════════════════════════════
-const L1='WE BUILD IT.',L2='YOU RUN IT.',FULL=L1+'\n'+L2;
-const typedEl=document.getElementById('typed'),cursorEl=document.getElementById('cursor');
-let idx=0;
-
-function render(){
-  const s=FULL.slice(0,idx),nl=s.indexOf('\n');
-  typedEl.innerHTML=nl===-1?s:s.slice(0,nl)+'<br>'+s.slice(nl+1);
-}
-function type(){
-  if(idx>=FULL.length){
-    setTimeout(()=>{
-      cursorEl.style.animation='none';
-      cursorEl.style.transition='opacity .3s';
-      cursorEl.style.opacity='0';
-      setTimeout(startDragon,450);
-    },950);
-    return;
-  }
-  const ch=FULL[idx++];render();
-  if(ch!=='\n')playClick();
-  let d=180+(Math.random()*80-30);
-  if(ch==='.')d+=200;if(ch===' ')d-=30;
-  setTimeout(type,Math.max(80,d));
-}
-
-function startDragon(){
-  D.visible=true;D.entering=true;
-  loopRunning=true;
-  const startPos=entryHeadPos(0);
-  D.hx=startPos.x;D.hy=startPos.y;
-  requestAnimationFrame(tick);
-}
-
-setTimeout(type,600);
-</script>
+    setTimeout(type, 600);
+  </script>
 </body>
 </html>
