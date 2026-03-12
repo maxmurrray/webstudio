@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio — We Build It. You Run It.</title>
+  <link rel="stylesheet" href="https://use.typekit.net/dlk5fdl.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #fff;
+      color: #000;
+      font-family: 'basic-sans', 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .wrap {
+      position: absolute;
+      top: 24vh;
+      left: 48px;
+    }
+
+    /* ── HEADLINE ── */
+    .headline {
+      font-size: clamp(60px, 9.2vw, 130px);
+      font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      color: #000;
+    }
+
+    /* blinking cursor */
+    #cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.82em;
+      background: #000;
+      vertical-align: -0.04em;
+      margin-left: 4px;
+      animation: blink 0.55s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── NAV ── */
+    .nav {
+      margin-top: 40px;
+      display: flex;
+      gap: 52px;
+      opacity: 0;
+      transform: translateY(100px);
+    }
+
+    .nav a {
+      font-family: 'basic-sans', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #000;
+      text-decoration: none;
+    }
+
+    /* staggered slam-up for each link */
+    .nav.show a {
+      animation: slamin 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(80px);
+    }
+    .nav.show a:nth-child(1) { animation-delay: 0ms;   }
+    .nav.show a:nth-child(2) { animation-delay: 60ms;  }
+    .nav.show a:nth-child(3) { animation-delay: 120ms; }
+
+    @keyframes slamin {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="headline"><span id="typed"></span><span id="cursor"></span></div>
+    <nav class="nav" id="nav">
+      <a href="#">ABOUT</a>
+      <a href="#">PORTFOLIO</a>
+      <a href="#">CONTACT</a>
+    </nav>
+  </div>
+
+  <script>
+    // ── KEYBOARD CLICK (Web Audio) ────────────────────────
+    let _ctx = null;
+    function getCtx() {
+      if (!_ctx) _ctx = new (window.AudioContext || window.webkitAudioContext)();
+      return _ctx;
+    }
+    function playClick() {
+      try {
+        const ctx = getCtx();
+        const t = ctx.currentTime;
+        // short noise burst shaped like a mechanical keyswitch
+        const len = Math.floor(ctx.sampleRate * 0.032);
+        const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len * 0.15));
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        // bandpass to give it that clicky plastic-meets-metal tone
+        const bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = 3400; bp.Q.value = 1.4;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.28, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.032);
+        src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+        src.start();
+      } catch(e) {}
+    }
+
+    // ── TYPING ───────────────────────────────────────────
+    const LINE1  = 'WE BUILD IT.';
+    const LINE2  = 'YOU RUN IT.';
+    const FULL   = LINE1 + '\n' + LINE2;
+
+    const typedEl  = document.getElementById('typed');
+    const cursorEl = document.getElementById('cursor');
+    const navEl    = document.getElementById('nav');
+
+    let idx = 0;
+
+    function render() {
+      const s = FULL.slice(0, idx);
+      const nl = s.indexOf('\n');
+      typedEl.innerHTML = nl === -1 ? s : s.slice(0, nl) + '<br>' + s.slice(nl + 1);
+    }
+
+    function type() {
+      if (idx >= FULL.length) {
+        // Typing done — let cursor blink for ~1s, then fade it out and slam nav
+        setTimeout(() => {
+          cursorEl.style.animation = 'none';
+          cursorEl.style.transition = 'opacity 0.3s';
+          cursorEl.style.opacity = '0';
+          // small gap then nav slams in
+          setTimeout(() => {
+            navEl.style.opacity = '1'; // un-hide the container
+            navEl.classList.add('show');
+          }, 220);
+        }, 950);
+        return;
+      }
+
+      const ch = FULL[idx++];
+      render();
+      if (ch !== '\n') playClick();
+
+      // ~5s total over 23 chars = ~217ms avg
+      // add variation + pauses after punctuation
+      let delay = 180 + (Math.random() * 80 - 30);
+      if (ch === '.') delay += 200; // pause after period
+      if (ch === ' ') delay -= 30;
+      setTimeout(type, Math.max(80, delay));
+    }
+
+    // kick off after a brief beat
+    setTimeout(type, 600);
+  </script>
+</body>
+</html>
