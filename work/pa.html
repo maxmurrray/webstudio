@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proudly Average — Studio 33</title>
+  <link rel="stylesheet" href="https://use.typekit.net/dlk5fdl.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .pa-hero-bg { background: #000 !important; }
+    .pa-eyes {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center; gap: 3rem;
+    }
+    .pa-eye {
+      width: 80px; height: 80px; background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .pa-pupil {
+      width: 32px; height: 32px; background: #000; border-radius: 50%;
+      position: absolute; transition: transform .1s;
+    }
+    .pa-eye-lg { width: 120px; height: 120px; }
+    .pa-eye-lg .pa-pupil { width: 48px; height: 48px; }
+  </style>
+</head>
+<body>
+  <nav class="cs-nav">
+    <a href="../index.html" class="cs-back">← Back to Studio 33</a>
+    <a href="../index.html" class="cs-logo">Studio 33</a>
+  </nav>
+
+  <section class="cs-hero">
+    <div class="cs-hero-bg pa-hero-bg">
+      <div class="pa-eyes" id="eyeWrap">
+        <div class="pa-eye" data-eye><div class="pa-pupil"></div></div>
+        <div class="pa-eye pa-eye-lg" data-eye><div class="pa-pupil"></div></div>
+        <div class="pa-eye" data-eye><div class="pa-pupil"></div></div>
+      </div>
+    </div>
+    <div class="cs-hero-overlay"></div>
+    <div class="cs-hero-content">
+      <div class="cs-category">E-commerce · Brand · SMS Marketing</div>
+      <h1 class="cs-title">Proudly Average</h1>
+      <p class="cs-tagline">A landing page that turns visitors into subscribers — and automatically texts every single one of them.</p>
+    </div>
+    <div class="cs-hero-meta">
+      <span class="cs-tag">Landing Page</span>
+      <span class="cs-tag">SMS Marketing</span>
+      <span class="cs-tag">Animation</span>
+    </div>
+  </section>
+
+  <div class="cs-body">
+    <div class="cs-overview">
+      <div class="cs-overview-big">A streetwear brand for people who are okay with being average — and proud of it.</div>
+      <div class="cs-overview-desc">Proudly Average is the clothing brand of Mike & Henry, two comedic influencers with 2.5M+ followers. We built the entire launch infrastructure: a mystery landing page, a phone capture system tied directly to their SMS marketing platform, and a brand identity built for Drop 01.</div>
+    </div>
+
+    <div class="cs-stats">
+      <div class="cs-stat"><div class="cs-stat-num">2.5M+</div><div class="cs-stat-label">Founder following</div></div>
+      <div class="cs-stat"><div class="cs-stat-num">Apr 24</div><div class="cs-stat-label">Drop 01 launch</div></div>
+      <div class="cs-stat"><div class="cs-stat-num">0</div><div class="cs-stat-label">Templates used</div></div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">The Build</div>
+      <h3>A landing page with one job: capture phone numbers.</h3>
+      <p>The site is pure black. No distractions. A pair of animated SVG eyes stare back at you, following your cursor across the screen. Below them, a single phone input powered by Emotive — a top-tier SMS marketing platform used by major streetwear brands.</p>
+      <p>The moment someone submits their number, they get a welcome text automatically. That list becomes the audience for every future drop announcement, discount, and moment of chaos Mike & Henry cook up.</p>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">The Animations</div>
+      <h3>Eyes that follow you everywhere.</h3>
+      <p>The hero visual is a pair of SVG eyes that track cursor movement across the entire viewport. Each pupil calculates the angle from eye center to cursor position using trigonometry, then applies a bounded translate so the pupil stays inside the iris no matter where the mouse goes.</p>
+      <p>The intro animation staggers in the eyes, wordmark, and form on load. There's also an easter egg — click the right place and something unexpected happens.</p>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">Key Features</div>
+      <div class="cs-features">
+        <div class="cs-feature">
+          <div class="cs-feature-title">Emotive SMS Integration</div>
+          <div class="cs-feature-desc">Native iframe embed replaces a custom form. Every signup flows directly into their Emotive subscriber list and triggers an automated welcome text.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">Animated SVG Eyes</div>
+          <div class="cs-feature-desc">Three eyes — two small, one large — track the cursor in real time. Pupils are bounded inside the iris, animating smoothly at 60fps.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">Pure Black Aesthetic</div>
+          <div class="cs-feature-desc">No colors, no gradients, no images. Just black, white, and the brand. Mysterious by design — visitors don't know what they're signing up for yet.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">Mobile-First</div>
+          <div class="cs-feature-desc">Responsive layout with 100dvh viewport fix for iOS Safari. The phone form is touch-optimized and opens the native keyboard on tap.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-cta-bar">
+      <div class="cs-cta-text">See it live before Drop 01</div>
+      <a href="https://proudlyaverage.com" target="_blank" class="cs-cta-btn">Visit site →</a>
+    </div>
+  </div>
+
+  <script>
+    // Eye tracking
+    const eyes = document.querySelectorAll('[data-eye]');
+    document.addEventListener('mousemove', e => {
+      eyes.forEach(eye => {
+        const r = eye.getBoundingClientRect();
+        const cx = r.left + r.width/2, cy = r.top + r.height/2;
+        const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+        const dist = Math.min(r.width * .22, 18);
+        const x = Math.cos(angle)*dist, y = Math.sin(angle)*dist;
+        eye.querySelector('.pa-pupil').style.transform = `translate(${x}px,${y}px)`;
+      });
+    });
+  </script>
+</body>
+</html>

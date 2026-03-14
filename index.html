@@ -516,6 +516,100 @@
     }
 
     ::selection { background: var(--dark); color: #fff; }
+
+    /* ─── SLIDESHOW ─── */
+    .slideshow {
+      position: relative; overflow: hidden;
+      border-radius: 3px; height: 580px;
+      margin-top: 2rem;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      opacity: 0; pointer-events: none;
+      transition: opacity .7s var(--ease);
+    }
+    .slide.active { opacity: 1; pointer-events: all; }
+    .slide-bg {
+      position: absolute; inset: 0;
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .slide-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      opacity: .65; transition: transform 8s linear;
+    }
+    .slide.active .slide-bg img { transform: scale(1.04); }
+    .slide-eyes {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6rem; letter-spacing: .5rem;
+      opacity: .35; user-select: none;
+    }
+    .slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(15,16,21,.92) 0%, rgba(15,16,21,.2) 60%, transparent 100%);
+    }
+    .slide-content {
+      position: absolute; bottom: 3rem; left: 3rem;
+      z-index: 2;
+    }
+    .slide-cat {
+      font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(255,255,255,.45); margin-bottom: .8rem;
+    }
+    .slide-title {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 800; letter-spacing: -.04em; line-height: .95;
+      color: #fff; margin-bottom: 1.5rem;
+    }
+    .slide-cta {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .85rem; font-weight: 600;
+      color: #fff; text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,.35);
+      padding-bottom: .2rem;
+      transition: border-color .2s, color .2s;
+    }
+    .slide-cta:hover { border-color: #fff; }
+    .slide-counter {
+      position: absolute; top: 2.5rem; right: 3rem;
+      font-size: .72rem; letter-spacing: .14em;
+      color: rgba(255,255,255,.35); font-weight: 600;
+      text-transform: uppercase;
+    }
+    /* Arrows */
+    .ss-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,.12); border: none;
+      color: #fff; font-size: 1.1rem;
+      width: 48px; height: 48px; border-radius: 50%;
+      cursor: none; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .ss-arrow:hover { background: rgba(255,255,255,.25); }
+    .ss-prev { left: 1.5rem; }
+    .ss-next { right: 1.5rem; }
+    /* Dots */
+    .ss-dots {
+      display: flex; justify-content: center; gap: .5rem;
+      margin-top: 1.25rem;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--light); transition: background .3s, width .3s;
+      cursor: none;
+    }
+    .dot.active { background: var(--dark); width: 22px; border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      #work { padding: 0 1.5rem 4rem !important; }
+      .slideshow { height: 420px; }
+      .slide-content { bottom: 2rem; left: 1.5rem; }
+      .slide-counter { top: 1.5rem; right: 1.5rem; }
+      .ss-arrow { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -677,61 +771,100 @@
     </div>
   </section>
 
-  <!-- ─── PORTFOLIO ─── -->
-  <section class="portfolio-wrap" id="work">
+  <!-- ─── WORK SLIDESHOW ─── -->
+  <section id="work" style="padding: 0 2.5rem 6rem; max-width:1248px; margin:0 auto;">
     <div class="section-pre r">/ Selected Work</div>
-    <div class="port-grid">
 
-      <!-- Big card -->
-      <div class="port-left">
-        <a class="port-card rs" href="https://proudlyaverage.com" target="_blank">
-          <div class="port-card-inner">
-            <div class="port-bg" style="background:#000;">
-              <img src="pa.jpg" alt="Proudly Average" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
-            </div>
-            <div class="port-gradient"></div>
-            <div class="port-info">
-              <div class="port-name">Proudly Average</div>
-              <div class="port-type">E-commerce · Brand · SMS Marketing</div>
-            </div>
-          </div>
-        </a>
+    <div class="slideshow rs" id="ss">
+      <!-- Slides -->
+      <div class="slide active" data-href="work/pa.html">
+        <div class="slide-bg" style="background:#000;">
+          <div class="slide-eyes">👁&thinsp;&thinsp;&thinsp;👁</div>
+        </div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">E-commerce · Brand · SMS</div>
+          <div class="slide-title">Proudly Average</div>
+          <a href="work/pa.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">01 / 07</div>
       </div>
 
-      <!-- Two stacked cards -->
-      <div class="port-right">
-        <a class="port-card rs d1" href="https://punksierge.vercel.app" target="_blank">
-          <div class="port-card-inner">
-            <div class="port-bg" style="background:#080808;">
-              <img src="punk.jpg" alt="Punksierge" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
-            </div>
-            <div class="port-gradient"></div>
-            <div class="port-info">
-              <div class="port-name">Punksierge</div>
-              <div class="port-type">Brand Site · Blog</div>
-            </div>
-          </div>
-        </a>
-        <a class="port-card rs d2" href="https://maxmurray.me" target="_blank">
-          <div class="port-card-inner">
-            <div class="port-bg" style="background:#0f0f14;">
-              <img src="mysite.jpg" alt="maxmurray.me" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
-            </div>
-            <div class="port-gradient"></div>
-            <div class="port-info">
-              <div class="port-name">maxmurray.me</div>
-              <div class="port-type">Personal Portfolio</div>
-            </div>
-          </div>
-        </a>
+      <div class="slide" data-href="work/punksierge.html">
+        <div class="slide-bg"><img src="work/punk.jpg" alt="Punksierge"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Brand · Interactive · Web3</div>
+          <div class="slide-title">Punksierge</div>
+          <a href="work/punksierge.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">02 / 07</div>
       </div>
 
+      <div class="slide" data-href="work/officeblog.html">
+        <div class="slide-bg"><img src="work/officeblog.jpg" alt="Office Blog"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Brand · Content Platform · Product</div>
+          <div class="slide-title">Office Blog</div>
+          <a href="work/officeblog.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">03 / 07</div>
+      </div>
+
+      <div class="slide" data-href="work/nori.html">
+        <div class="slide-bg"><img src="work/nori.jpg" alt="Nōri Sushi"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Restaurant · Web Design · Brand</div>
+          <div class="slide-title">Nōri Sushi</div>
+          <a href="work/nori.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">04 / 07</div>
+      </div>
+
+      <div class="slide" data-href="work/rpo.html">
+        <div class="slide-bg"><img src="work/rpo.jpg" alt="Ready Paper One"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Product · Free Tool · Resume</div>
+          <div class="slide-title">Ready Paper One</div>
+          <a href="work/rpo.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">05 / 07</div>
+      </div>
+
+      <div class="slide" data-href="work/tabby.html">
+        <div class="slide-bg"><img src="work/tabby.jpg" alt="Tabby"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Product · Web App</div>
+          <div class="slide-title">Tabby</div>
+          <a href="work/tabby.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">06 / 07</div>
+      </div>
+
+      <div class="slide" data-href="work/ollie.html">
+        <div class="slide-bg"><img src="work/ollie.jpg" alt="Ollie"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <div class="slide-cat">Portfolio · Brand · Web Design</div>
+          <div class="slide-title">Ollie</div>
+          <a href="work/ollie.html" class="slide-cta">View case study →</a>
+        </div>
+        <div class="slide-counter">07 / 07</div>
+      </div>
+
+      <!-- Arrows -->
+      <button class="ss-arrow ss-prev" id="ssPrev" aria-label="Previous">←</button>
+      <button class="ss-arrow ss-next" id="ssNext" aria-label="Next">→</button>
     </div>
 
-    <div style="margin-top:1.5rem; text-align:right;">
-      <a href="mailto:hello@studio33.co" style="font-size:.82rem; color:var(--mid); text-decoration:none; opacity:.7;">
-        Your project could be here →
-      </a>
+    <!-- Dots -->
+    <div class="ss-dots" id="ssDots">
+      <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
     </div>
   </section>
 
@@ -749,7 +882,9 @@
         <p>Built alongside brands people actually know.</p>
         <span class="logo-pill">Proudly Average</span>
         <span class="logo-pill">Punksierge</span>
-        <span class="logo-pill">maxmurray.me</span>
+        <span class="logo-pill">Office Blog</span>
+        <span class="logo-pill">Nōri Sushi</span>
+        <span class="logo-pill">Ready Paper One</span>
         <span class="logo-pill">Your brand here</span>
       </div>
     </div>
@@ -766,9 +901,11 @@
         <div class="footer-cols">
           <div class="footer-col">
             <div class="footer-col-title">Work</div>
-            <a href="https://proudlyaverage.com" target="_blank">Proudly Average</a>
-            <a href="https://punksierge.vercel.app" target="_blank">Punksierge</a>
-            <a href="https://maxmurray.me" target="_blank">maxmurray.me</a>
+            <a href="work/pa.html">Proudly Average</a>
+            <a href="work/punksierge.html">Punksierge</a>
+            <a href="work/officeblog.html">Office Blog</a>
+            <a href="work/nori.html">Nōri Sushi</a>
+            <a href="work/rpo.html">Ready Paper One</a>
           </div>
           <div class="footer-col">
             <div class="footer-col-title">Services</div>
@@ -835,6 +972,43 @@
         setTimeout(() => el.classList.add('on'), i * 130);
       });
     }, 80);
+
+    // ── Slideshow
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const dots   = document.querySelectorAll('.dot');
+      const prev   = document.getElementById('ssPrev');
+      const next   = document.getElementById('ssNext');
+      let cur = 0, timer;
+
+      function go(n) {
+        slides[cur].classList.remove('active');
+        dots[cur].classList.remove('active');
+        cur = (n + slides.length) % slides.length;
+        slides[cur].classList.add('active');
+        dots[cur].classList.add('active');
+      }
+
+      function auto() {
+        clearInterval(timer);
+        timer = setInterval(() => go(cur + 1), 5000);
+      }
+
+      if (prev) prev.addEventListener('click', () => { go(cur - 1); auto(); });
+      if (next) next.addEventListener('click', () => { go(cur + 1); auto(); });
+      dots.forEach((d, i) => d.addEventListener('click', () => { go(i); auto(); }));
+
+      // Swipe support
+      const ss = document.getElementById('ss');
+      let startX = 0;
+      ss.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      ss.addEventListener('touchend',   e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) { go(cur + (dx < 0 ? 1 : -1)); auto(); }
+      });
+
+      auto();
+    })();
   </script>
 </body>
 </html>

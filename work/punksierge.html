@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punksierge — Studio 33</title>
+  <link rel="stylesheet" href="https://use.typekit.net/dlk5fdl.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .accent { color: #DE4097; }
+  </style>
+</head>
+<body>
+  <nav class="cs-nav">
+    <a href="../index.html" class="cs-back">← Back to Studio 33</a>
+    <a href="../index.html" class="cs-logo">Studio 33</a>
+  </nav>
+
+  <section class="cs-hero">
+    <div class="cs-hero-bg">
+      <img src="punk.jpg" alt="Punksierge">
+    </div>
+    <div class="cs-hero-overlay"></div>
+    <div class="cs-hero-content">
+      <div class="cs-category">Brand Identity · Web · Interactive</div>
+      <h1 class="cs-title">Punksierge</h1>
+      <p class="cs-tagline">A CryptoPunks concierge built from nothing — name, logo, fonts, colors, code, and content, all from scratch.</p>
+    </div>
+    <div class="cs-hero-meta">
+      <span class="cs-tag">Branding</span>
+      <span class="cs-tag">Interactive</span>
+      <span class="cs-tag">Web3</span>
+    </div>
+  </section>
+
+  <div class="cs-body">
+    <div class="cs-overview">
+      <div class="cs-overview-big">Don't buy a CryptoPunk blind. We'll help you find the right one.</div>
+      <div class="cs-overview-desc">Punksierge is a free CryptoPunks concierge service — no fees, no pressure, just honest advice on one of the most coveted NFT collections in history. Every element of the brand was built from scratch: the name, the visual identity, the site, and the content.</div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">Brand Identity</div>
+      <h3>A brand built from zero.</h3>
+      <p>The name, the logo, the color, the font — all original. The logo uses a geometric mark: a three-point pattern (left, middle-right, left) designed to feel cryptic and precise. The primary color is <span class="accent">#DE4097</span> — a hot pink that pops hard against pure black. No softness, no gray. Everything is sharp edges and stark contrast.</p>
+      <p>Typography: Chakra Petch via Adobe Fonts. A technical, grid-based typeface that feels right at home in a world of blockchain and pixel art. Left-aligned throughout. Nothing centered. Nothing soft.</p>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">Button Animation</div>
+      <h3>A canvas pixel-fill effect built from scratch.</h3>
+      <p>The main CTA button fills with pixels on click — a canvas-based animation that tiles 10×10 pixel blocks across the button surface in randomized order, creating a "filling" effect before navigating. Every pixel placed by hand in code.</p>
+      <div class="cs-code">
+        <pre><span class="cm">// Canvas pixel-fill animation</span>
+<span class="kw">function</span> <span class="fn">fillButton</span>(btn, callback) {
+  <span class="kw">const</span> canvas = document.<span class="fn">createElement</span>(<span class="str">'canvas'</span>);
+  <span class="kw">const</span> ctx = canvas.<span class="fn">getContext</span>(<span class="str">'2d'</span>);
+  <span class="kw">const</span> TILE = <span class="num">10</span>;
+  <span class="kw">const</span> W = btn.offsetWidth, H = btn.offsetHeight;
+  canvas.width = W; canvas.height = H;
+
+  <span class="cm">// Build shuffled grid of tile coords</span>
+  <span class="kw">const</span> cols = Math.<span class="fn">ceil</span>(W/TILE), rows = Math.<span class="fn">ceil</span>(H/TILE);
+  <span class="kw">let</span> tiles = [];
+  <span class="kw">for</span> (<span class="kw">let</span> r=<span class="num">0</span>; r&lt;rows; r++)
+    <span class="kw">for</span> (<span class="kw">let</span> c=<span class="num">0</span>; c&lt;cols; c++)
+      tiles.<span class="fn">push</span>([c*TILE, r*TILE]);
+
+  <span class="cm">// Fisher-Yates shuffle</span>
+  <span class="kw">for</span> (<span class="kw">let</span> i=tiles.length-<span class="num">1</span>; i&gt;<span class="num">0</span>; i--) {
+    <span class="kw">const</span> j = Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>()*(i+<span class="num">1</span>));
+    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+  }
+
+  ctx.fillStyle = <span class="str">'#DE4097'</span>;
+  <span class="kw">let</span> i = <span class="num">0</span>;
+  <span class="kw">const</span> step = () => {
+    <span class="kw">const</span> batch = Math.<span class="fn">ceil</span>(tiles.length / <span class="num">12</span>);
+    <span class="kw">for</span> (<span class="kw">let</span> b=<span class="num">0</span>; b&lt;batch &amp;&amp; i&lt;tiles.length; b++, i++)
+      ctx.<span class="fn">fillRect</span>(tiles[i][<span class="num">0</span>], tiles[i][<span class="num">1</span>], TILE, TILE);
+    <span class="kw">if</span> (i &lt; tiles.length) <span class="fn">requestAnimationFrame</span>(step);
+    <span class="kw">else</span> <span class="fn">callback</span>();
+  };
+  <span class="fn">requestAnimationFrame</span>(step);
+}</pre>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-section-label">Key Features</div>
+      <div class="cs-features">
+        <div class="cs-feature">
+          <div class="cs-feature-title">Marquee Animation</div>
+          <div class="cs-feature-desc">A continuous scrolling marquee of punk traits and numbers runs across the page, built in pure CSS with infinite keyframe animation. No JS, no library.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">PunkPick Game</div>
+          <div class="cs-feature-desc">An interactive trait-matching game where users build their ideal CryptoPunk. Results link to real punks with those traits on OpenSea.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">Research-Backed Blog</div>
+          <div class="cs-feature-desc">Original posts on Celebrity Punks, Clown Punks, AI Agents buying NFTs. Every fact verified against on-chain data and public sales history.</div>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feature-title">Contact Modal</div>
+          <div class="cs-feature-desc">A minimal overlay with Twitter, Email, and Discord links. Designed to feel personal, not corporate — because the service is exactly that.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-cta-bar">
+      <div class="cs-cta-text">See the brand live</div>
+      <a href="https://punksierge.vercel.app" target="_blank" class="cs-cta-btn">Visit Punksierge →</a>
+    </div>
+  </div>
+</body>
+</html>
