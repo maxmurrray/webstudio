@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studio 33 — Web Design & AI Portals</title>
-  <meta name="description" content="Studio 33 builds websites and AI-powered client portals. We build it. You run it.">
+  <meta name="description" content="Studio 33 builds websites that impress — and AI-powered portals that make updates effortless.">
   <link rel="stylesheet" href="https://use.typekit.net/dlk5fdl.css">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,21 +37,15 @@
 
     /* ─── CURSOR ─── */
     #cur {
-      position: fixed; width: 10px; height: 10px;
-      background: var(--dark); border-radius: 50%;
+      position: fixed; width: 28px; height: 28px;
+      border: 1.5px solid rgba(15,16,21,0.55);
+      border-radius: 50%;
       pointer-events: none; z-index: 9999;
       transform: translate(-50%,-50%);
-      mix-blend-mode: difference;
+      transition: width .35s var(--ease), height .35s var(--ease), border-color .25s;
     }
-    #cur-ring {
-      position: fixed; width: 38px; height: 38px;
-      border: 1px solid rgba(15,16,21,0.3); border-radius: 50%;
-      pointer-events: none; z-index: 9998;
-      transform: translate(-50%,-50%);
-      transition: width .4s var(--ease), height .4s var(--ease), border-color .3s;
-    }
-    body.link-hover #cur { width: 54px; height: 54px; }
-    body.link-hover #cur-ring { opacity: 0; }
+    #cur-ring { display: none; }
+    body.link-hover #cur { width: 44px; height: 44px; border-color: rgba(15,16,21,0.3); }
 
     /* ─── NAV ─── */
     #nav {
@@ -107,9 +101,9 @@
       gap: 2rem; margin-top: -.35em; /* visually overlap baseline */
     }
     .hero-sub {
-      max-width: 300px; padding-bottom: .4rem;
-      font-size: .95rem; line-height: 1.65;
-      color: var(--dark); opacity: .55;
+      max-width: 360px; padding-bottom: .6rem;
+      font-size: 1.05rem; line-height: 1.7;
+      color: var(--dark); opacity: .6;
     }
 
     /* Blobs */
@@ -543,11 +537,11 @@
     <div class="noise"></div>
     <div class="hero-inner">
       <div class="hero-r1">
-        <div class="dsp-hero rl" id="h1">We build it.</div>
+        <div class="dsp-hero rl" id="h1">Built to impress.</div>
       </div>
       <div class="hero-r2">
-        <p class="hero-sub r d2">Web design, development & AI-powered portals. We build sites that give your clients the keys to update their own content — no dev needed.</p>
-        <div class="dsp-hero rr d1" id="h2">You run it.</div>
+        <p class="hero-sub r d2">We design and build websites that look sharp, load fast, and come with an AI portal so updates take seconds — not support tickets.</p>
+        <div class="dsp-hero rr d1" id="h2">Made to last.</div>
       </div>
     </div>
   </section>
@@ -816,11 +810,16 @@
   <script>
     // ── Cursor
     const cur = document.getElementById('cur');
-    const ring = document.getElementById('cur-ring');
     if (cur) {
-      let mx = 0, my = 0, rx = 0, ry = 0;
-      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
-      (function loop() { rx += (mx-rx)*.1; ry += (my-ry)*.1; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(loop); })();
+      let tx = 0, ty = 0, cx = 0, cy = 0;
+      document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+      (function loop() {
+        cx += (tx - cx) * 0.14;
+        cy += (ty - cy) * 0.14;
+        cur.style.left = cx + 'px';
+        cur.style.top = cy + 'px';
+        requestAnimationFrame(loop);
+      })();
       document.querySelectorAll('a,button,.exp-item,.port-card').forEach(el => {
         el.addEventListener('mouseenter', () => document.body.classList.add('link-hover'));
         el.addEventListener('mouseleave', () => document.body.classList.remove('link-hover'));
