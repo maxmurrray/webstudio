@@ -335,16 +335,15 @@
     .port-bg { position: absolute; inset: 0; }
     .port-gradient {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(15,16,21,.8) 0%, transparent 55%);
-      opacity: 0; transition: opacity .35s;
+      background: linear-gradient(to top, rgba(15,16,21,.75) 0%, transparent 50%);
+      opacity: 1; transition: opacity .35s;
     }
     .port-card:hover .port-gradient { opacity: 1; }
     .port-info {
       position: absolute; bottom: 1.5rem; left: 1.5rem; z-index: 2;
-      opacity: 0; transform: translateY(6px);
+      opacity: 1; transform: translateY(0);
       transition: opacity .3s, transform .3s var(--ease);
     }
-    .port-card:hover .port-info { opacity: 1; transform: translateY(0); }
     .port-name { font-size: 1rem; font-weight: 700; }
     .port-type { font-size: .75rem; opacity: .55; margin-top: .2rem; }
 
@@ -540,7 +539,7 @@
         <div class="dsp-hero rl" id="h1">Built to impress.</div>
       </div>
       <div class="hero-r2">
-        <p class="hero-sub r d2">We design and build websites that look sharp, load fast, and come with an AI portal so updates take seconds — not support tickets.</p>
+        <p class="hero-sub r d2">We design and build websites that look sharp, load fast, and come with an AI portal so updates take seconds. Not support tickets.</p>
         <div class="dsp-hero rr d1" id="h2">Made to last.</div>
       </div>
     </div>
@@ -605,7 +604,7 @@
       <div class="exp-content">
         <div class="exp-num">01</div>
         <h2 class="exp-title">Web Design</h2>
-        <p class="exp-desc">Original, fast, built to convert. We design sites that look sharp and feel intentional — no templates, no bloat, no guessing.</p>
+        <p class="exp-desc">Original, fast, built to convert. Websites that look sharp, feel intentional, and open up endless possibilities for your brand.</p>
         <div class="exp-tags">
           <span class="exp-tag">Landing pages</span>
           <span class="exp-tag">Brand sites</span>
@@ -630,16 +629,16 @@
           </div>
         </div>
         <div class="exp-color-overlay"></div>
-        <div class="exp-hover-label"><span>Development & No-Code</span></div>
+        <div class="exp-hover-label"><span>Development</span></div>
       </div>
       <div class="exp-content">
         <div class="exp-num">02</div>
-        <h2 class="exp-title">Development & No-Code</h2>
-        <p class="exp-desc">Built with Webflow, Vercel, and clean code. Fast, reliable, easy to hand off — your team can keep it running without us.</p>
+        <h2 class="exp-title">Development</h2>
+        <p class="exp-desc">We write real code. Fast, clean, and built to last. Every site is hand-crafted so it performs exactly how it should and scales when your business does.</p>
         <div class="exp-tags">
-          <span class="exp-tag">Webflow</span>
-          <span class="exp-tag">Custom HTML/CSS/JS</span>
-          <span class="exp-tag">Vercel</span>
+          <span class="exp-tag">HTML / CSS / JS</span>
+          <span class="exp-tag">React</span>
+          <span class="exp-tag">Custom builds</span>
           <span class="exp-tag">CMS integration</span>
           <span class="exp-tag">API connections</span>
         </div>
@@ -658,7 +657,7 @@
       <div class="exp-content">
         <div class="exp-num">03</div>
         <h2 class="exp-title">AI Agent Portals</h2>
-        <p class="exp-desc">Every site we build includes a private client portal — a personal AI that knows your site, your brand, and can make updates on command. No developer needed.</p>
+        <p class="exp-desc">Every site we build comes with a private client portal. A personal AI that knows your site, your brand, and can make updates on command. No developer needed.</p>
         <div class="exp-tags">
           <span class="exp-tag">Private client portal</span>
           <span class="exp-tag">AI-powered updates</span>
@@ -680,7 +679,7 @@
       <div class="exp-content">
         <div class="exp-num">04</div>
         <h2 class="exp-title">Brand & Identity</h2>
-        <p class="exp-desc">Logo, typography, color — the foundation everything else is built on. We keep it clean, sharp, and ownable.</p>
+        <p class="exp-desc">Logo, typography, color. The foundation everything else is built on. We keep it clean, sharp, and ownable.</p>
         <div class="exp-tags">
           <span class="exp-tag">Logo design</span>
           <span class="exp-tag">Typography</span>
@@ -700,8 +699,8 @@
       <div class="port-left">
         <a class="port-card rs" href="https://proudlyaverage.com" target="_blank">
           <div class="port-card-inner">
-            <div class="port-bg bg-pa">
-              <div class="pa-visual">👁&thinsp;👁</div>
+            <div class="port-bg" style="background:#000;">
+              <img src="pa.jpg" alt="Proudly Average" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
             </div>
             <div class="port-gradient"></div>
             <div class="port-info">
@@ -716,8 +715,8 @@
       <div class="port-right">
         <a class="port-card rs d1" href="https://punksierge.vercel.app" target="_blank">
           <div class="port-card-inner">
-            <div class="port-bg bg-punk">
-              <div class="punk-visual">#3355</div>
+            <div class="port-bg" style="background:#080808;">
+              <img src="punk.jpg" alt="Punksierge" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
             </div>
             <div class="port-gradient"></div>
             <div class="port-info">
@@ -728,12 +727,8 @@
         </a>
         <a class="port-card rs d2" href="https://maxmurray.me" target="_blank">
           <div class="port-card-inner">
-            <div class="port-bg bg-mysite">
-              <div class="mysite-visual">
-                <div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div>
-                <div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div>
-                <div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div><div class="mysite-dot"></div>
-              </div>
+            <div class="port-bg" style="background:#0f0f14;">
+              <img src="mysite.jpg" alt="maxmurray.me" style="width:100%;height:100%;object-fit:cover;object-position:top center;opacity:.9;">
             </div>
             <div class="port-gradient"></div>
             <div class="port-info">
