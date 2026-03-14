@@ -282,7 +282,16 @@
     .s4:hover .exp-title { color: var(--c4); }
     .s4:hover .exp-num { color: var(--c4); }
 
-    /* Thumbnail illustrations */
+    /* Gemini-generated service images */
+    .svc-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      transition: transform .6s var(--ease);
+    }
+    .exp-item:hover .svc-img { transform: scale(1.04); }
+
+    /* Thumbnail illustrations (legacy, hidden by images) */
     .thumb-grid {
       display: grid; grid-template-columns: repeat(4,1fr);
       gap: 3px; width: 80%; height: 80%; padding: 1.5rem;
@@ -588,16 +597,7 @@
     <!-- Web Design -->
     <div class="exp-item s1 rs">
       <div class="exp-thumb">
-        <div class="exp-thumb-inner">
-          <div class="thumb-grid">
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-            <div class="thumb-cell"></div><div class="thumb-cell"></div>
-          </div>
-        </div>
+        <img src="s1_webdesign.jpg" alt="Web Design" class="svc-img">
         <div class="exp-color-overlay"></div>
         <div class="exp-hover-label"><span>Web Design</span></div>
       </div>
@@ -618,16 +618,7 @@
     <!-- Development -->
     <div class="exp-item s2 rs">
       <div class="exp-thumb">
-        <div class="exp-thumb-inner">
-          <div class="thumb-lines">
-            <div class="thumb-line" style="width:65%"></div>
-            <div class="thumb-line" style="width:90%"></div>
-            <div class="thumb-line" style="width:50%"></div>
-            <div class="thumb-line" style="width:80%"></div>
-            <div class="thumb-line" style="width:40%"></div>
-            <div class="thumb-line" style="width:70%"></div>
-          </div>
-        </div>
+        <img src="s2_dev.jpg" alt="Development" class="svc-img">
         <div class="exp-color-overlay"></div>
         <div class="exp-hover-label"><span>Development</span></div>
       </div>
@@ -648,9 +639,7 @@
     <!-- AI Agent Portals -->
     <div class="exp-item s3 rs">
       <div class="exp-thumb">
-        <div class="exp-thumb-inner">
-          <div class="thumb-orb"></div>
-        </div>
+        <img src="s3_ai.jpg" alt="AI Agent Portals" class="svc-img">
         <div class="exp-color-overlay"></div>
         <div class="exp-hover-label"><span>AI Agent Portals</span></div>
       </div>
@@ -670,9 +659,7 @@
     <!-- Brand & Identity -->
     <div class="exp-item s4 rs">
       <div class="exp-thumb">
-        <div class="exp-thumb-inner">
-          <div class="thumb-type">Aa</div>
-        </div>
+        <img src="s4_brand.jpg" alt="Brand & Identity" class="svc-img">
         <div class="exp-color-overlay"></div>
         <div class="exp-hover-label"><span>Brand & Identity</span></div>
       </div>
