@@ -41,74 +41,67 @@
       overflow-x: hidden;
     }
 
-    /* ─── CURSOR — raindrop ─── */
+    /* ─── CURSOR — mazette-style pearl sphere ─── */
     #cur {
       position: fixed;
-      width: 28px; height: 28px;
-      pointer-events: none; z-index: 9999;
-
-      /* Teardrop shape: sharp top-left corner → points at ~11 o'clock after rotate */
-      border-radius: 0 50% 50% 50%;
-      /* translate positions the tip (top-left) exactly at the cursor hotspot */
-      transform: translate(calc(-50% + 20px), -50%) rotate(-45deg);
-
-      /* Water / glass base */
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(6px) saturate(200%) brightness(1.08);
-      -webkit-backdrop-filter: blur(6px) saturate(200%) brightness(1.08);
-      border: 0.75px solid rgba(255, 255, 255, 0.55);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      pointer-events: none; z-index: 999;
+      transform: translate(-50%, -50%);
       overflow: hidden;
 
-      transition: width .3s var(--ease), height .3s var(--ease), background .3s;
+      /* White pearl base — bright center, soft diffuse edges */
+      background: radial-gradient(
+        circle at 42% 38%,
+        rgba(255,255,255,0.96) 0%,
+        rgba(255,255,255,0.88) 28%,
+        rgba(248,246,255,0.65) 55%,
+        rgba(230,228,245,0.30) 78%,
+        transparent 100%
+      );
+
+      box-shadow:
+        inset -1px -2px 5px rgba(120,110,160,0.10),
+        0 2px 12px rgba(255,255,255,0.45);
+
+      transition: width .3s var(--ease), height .3s var(--ease);
       will-change: left, top;
     }
 
-    /* Specular highlight — small bright ellipse that makes it feel like glass */
-    #cur::before {
-      content: '';
-      position: absolute;
-      width: 45%; height: 38%;
-      top: 14%; left: 16%;
-      background: rgba(255, 255, 255, 0.55);
-      border-radius: 50%;
-      filter: blur(2.5px);
-      transform: rotate(-20deg);
-      pointer-events: none;
-    }
-
-    /* Iridescent rainbow refraction — continuously cycles hue */
+    /* Rotating iridescent shimmer — peach / mint / periwinkle / lavender / pink */
     #cur::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(
-        125deg,
-        rgba(255, 0,  100, .28)  0%,
-        rgba(255, 160, 0,  .24) 25%,
-        rgba(0,   220, 180, .22) 50%,
-        rgba(50,  100, 255, .26) 75%,
-        rgba(200, 0,   255, .24) 100%
+      border-radius: 50%;
+      background: conic-gradient(
+        from 45deg at 48% 52%,
+        rgba(255, 170, 160, 0.30) 0deg,
+        rgba(160, 235, 210, 0.25) 72deg,
+        rgba(175, 200, 255, 0.28) 144deg,
+        rgba(215, 175, 255, 0.30) 216deg,
+        rgba(255, 185, 215, 0.28) 288deg,
+        rgba(255, 170, 160, 0.30) 360deg
       );
-      mix-blend-mode: screen;
-      animation: drop-iridescence 3.5s linear infinite;
-      opacity: 0.55;
-      transition: opacity .35s;
+      filter: blur(5px);
+      animation: cur-iridescent 6s linear infinite;
+      opacity: 0.75;
+      transition: opacity .3s, filter .3s;
       pointer-events: none;
     }
 
-    @keyframes drop-iridescence {
-      0%   { filter: hue-rotate(0deg)   brightness(1.1); }
-      100% { filter: hue-rotate(360deg) brightness(1.1); }
+    @keyframes cur-iridescent {
+      to { transform: rotate(360deg); }
     }
 
     #cur-ring { display: none; }
 
-    /* Hover over links/text → drop swells slightly, rainbow goes full intensity */
+    /* Hover — swell + shimmer intensifies */
     body.link-hover #cur {
-      width: 36px; height: 36px;
-      background: rgba(255, 255, 255, 0.18);
+      width: 46px; height: 46px;
     }
     body.link-hover #cur::after {
       opacity: 1;
+      filter: blur(4px);
     }
 
     /* ─── NAV ─── */
