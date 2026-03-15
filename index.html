@@ -79,6 +79,12 @@
     }
     .nav-cta:hover { opacity: .75; }
 
+    /* ─── PAGE-LEVEL BACKGROUND BLOBS (fixed, behind everything) ─── */
+    .page-shapes {
+      position: fixed; inset: 0; z-index: -1;
+      pointer-events: none; overflow: hidden;
+    }
+
     /* ─── HERO ─── */
     .hero {
       padding: 10rem 2.5rem 6.5rem;
@@ -90,7 +96,7 @@
     .hero-r1 { display: flex; }
     .dsp-hero {
       font-size: clamp(3.5rem, 8.5vw, 6.5rem);
-      font-weight: 800; line-height: .95;
+      font-weight: 800; font-style: italic; line-height: .95;
       letter-spacing: -.04em; color: var(--dark);
     }
 
@@ -614,6 +620,14 @@
 </head>
 <body>
 
+  <!-- ─── PAGE BACKGROUND (fixed blobs, behind everything) ─── -->
+  <div class="page-shapes">
+    <div class="blob blob-green"></div>
+    <div class="blob blob-yellow"></div>
+    <div class="blob blob-blue"></div>
+    <div class="blob blob-pink"></div>
+  </div>
+
   <div id="cur"></div>
   <div id="cur-ring"></div>
 
@@ -625,25 +639,19 @@
       <li><a href="#services">Services</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="mailto:hello@studio33.co" class="nav-cta">Start a project</a>
+    <a href="mailto:hello@studio33.co" class="nav-cta">Lets Build!</a>
   </nav>
 
   <!-- ─── HERO ─── -->
   <section class="hero">
-    <div class="shapes">
-      <div class="blob blob-green"></div>
-      <div class="blob blob-yellow"></div>
-      <div class="blob blob-blue"></div>
-      <div class="blob blob-pink"></div>
-    </div>
     <div class="noise"></div>
     <div class="hero-inner">
       <div class="hero-r1">
-        <div class="dsp-hero rl" id="h1">Built to convert.</div>
+        <div class="dsp-hero rl" id="h1">Turn your ambitions</div>
       </div>
       <div class="hero-r2">
-        <p class="hero-sub r d2">We build sites that convert and last. Every one ships with an AI portal so you can update your own site in seconds. No tech skills. No developer. No cost.</p>
-        <div class="dsp-hero rr d1" id="h2">Made to last.</div>
+        <p class="hero-sub r d2">We build sites that convert and last. Every one ships with an AI portal so you can update your own site in seconds. No tech skills. No cost.</p>
+        <div class="dsp-hero rr d1" id="h2">Into a reality.</div>
       </div>
     </div>
   </section>
