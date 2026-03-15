@@ -36,16 +36,19 @@
       position: relative; /* so .page-shapes absolute positions against body */
     }
 
-    /* ─── CURSOR — mazette-style pearl sphere ─── */
+    /* ─── CURSOR — mazette-style ─── */
     #cur {
       position: fixed;
       width: 36px; height: 36px;
       border-radius: 50%;
-      pointer-events: none; z-index: 999;
+      pointer-events: none; z-index: 9999;
       transform: translate(-50%, -50%);
       overflow: hidden;
 
-      /* White pearl base — bright center, soft diffuse edges */
+      /* mix-blend-mode: lighten = rainbow refraction on dark text (Mazette technique) */
+      mix-blend-mode: lighten;
+
+      /* White pearl base */
       background: radial-gradient(
         circle at 42% 38%,
         rgba(255,255,255,0.96) 0%,
@@ -55,32 +58,28 @@
         transparent 100%
       );
 
-      box-shadow:
-        inset -1px -2px 5px rgba(120,110,160,0.10),
-        0 2px 12px rgba(255,255,255,0.45);
-
-      transition: width .3s var(--ease), height .3s var(--ease);
+      transition: width .25s var(--ease), height .25s var(--ease), border-radius .2s, background .2s;
       will-change: left, top;
     }
 
-    /* Rotating iridescent shimmer — peach / mint / periwinkle / lavender / pink */
+    /* Rotating iridescent shimmer */
     #cur::after {
       content: '';
       position: absolute; inset: 0;
       border-radius: 50%;
       background: conic-gradient(
         from 45deg at 48% 52%,
-        rgba(255, 170, 160, 0.30) 0deg,
-        rgba(160, 235, 210, 0.25) 72deg,
-        rgba(175, 200, 255, 0.28) 144deg,
-        rgba(215, 175, 255, 0.30) 216deg,
-        rgba(255, 185, 215, 0.28) 288deg,
-        rgba(255, 170, 160, 0.30) 360deg
+        rgba(255, 170, 160, 0.35) 0deg,
+        rgba(160, 235, 210, 0.30) 72deg,
+        rgba(175, 200, 255, 0.33) 144deg,
+        rgba(215, 175, 255, 0.35) 216deg,
+        rgba(255, 185, 215, 0.33) 288deg,
+        rgba(255, 170, 160, 0.35) 360deg
       );
       filter: blur(5px);
       animation: cur-iridescent 6s linear infinite;
-      opacity: 0.75;
-      transition: opacity .3s, filter .3s;
+      opacity: 0.85;
+      transition: opacity .25s;
       pointer-events: none;
     }
 
@@ -90,13 +89,14 @@
 
     #cur-ring { display: none; }
 
-    /* Hover — swell + shimmer intensifies */
+    /* Link/button hover → shrink to a small solid dot */
     body.link-hover #cur {
-      width: 46px; height: 46px;
+      width: 8px; height: 8px;
+      background: var(--dark);
+      mix-blend-mode: normal;
     }
     body.link-hover #cur::after {
-      opacity: 1;
-      filter: blur(4px);
+      opacity: 0;
     }
 
     /* ─── NAV ─── */
@@ -551,9 +551,22 @@
       #cur, #cur-ring { display: none; }
       #nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
-      .hero { padding: 8rem 1.5rem 4rem; }
-      .hero-r2 { flex-direction: column; align-items: flex-start; gap: .5rem; margin-top: .5rem; }
-      .hero-sub { max-width: 100%; }
+      .hero { padding: 7rem 1.5rem 3.5rem; }
+      .hero-r1 .dsp-hero { font-size: clamp(2.6rem, 10vw, 4.5rem); }
+      .hero-r2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .75rem;
+        margin-top: .1em;
+      }
+      /* "Into a reality." comes first on mobile, subtitle below */
+      .hero-r2 .dsp-hero { order: 1; font-size: clamp(2.6rem, 10vw, 4.5rem); }
+      .hero-sub {
+        order: 2;
+        max-width: 100%;
+        text-align: left;
+        font-size: .88rem;
+      }
       .showreel-wrap { padding: 0 1.5rem; }
       .showreel { height: 300px; }
       .stats-wrap { padding: 3rem 1.5rem; }
